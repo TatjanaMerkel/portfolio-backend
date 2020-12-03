@@ -7,6 +7,10 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+app.get('/products/', (req, res) => {
+    res.json({a: 'abc', b: 12})
+})
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
