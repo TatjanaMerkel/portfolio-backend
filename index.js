@@ -3,9 +3,10 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
-vegetables = [
+products = [
   {
     id: 1,
+    category: 'fruits',
     title: "Papaya",
     description: "Papayas are great",
     image:
@@ -13,6 +14,7 @@ vegetables = [
   },
   {
     id: 2,
+    category: 'fruits',
     title: "Banana",
     description: "Tati is great",
     image:
@@ -20,6 +22,7 @@ vegetables = [
   },
   {
     id: 3,
+    category: 'fruits',
     title: "Blueberry",
     description: "Blueberries are great",
     image:
@@ -32,7 +35,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/products/", (req, res) => {
-  res.json(vegetables);
+  res.json(products);
 });
 
 app.listen(port, () => {
