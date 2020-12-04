@@ -28,6 +28,14 @@ products = [
     image:
       "https://5.imimg.com/data5/RI/NH/MY-50344271/natural-fresh-blueberry-500x500.jpg",
   },
+  {
+    id: 4,
+    category: 'vegetables',
+    title: "Cucumber",
+    description: "Cucumbers are great",
+    image:
+      "https://images.heb.com/is/image/HEBGrocery/000319432",
+  },
 ];
 
 app.get("/", (req, res) => {
