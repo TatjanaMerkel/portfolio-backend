@@ -23,7 +23,7 @@ server.get("/products/", (req, res) => {
   connection.connect();
 
   connection.query(
-    "SELECT category, name, description, image FROM products",
+    "SELECT id, category, name, description, image FROM products",
     function (error, results, fields) {
       if (error) throw error;
 
@@ -58,6 +58,32 @@ server.post("/product", (req, res) => {
       console.log("The INSERT result is: ", results);
 
       res.json({ success: "Product added successfully" });
+    }
+  );
+
+  connection.end();
+});
+
+server.delete("/product/:id", (req, res) => {
+  const id = req.params.id;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "DELETE FROM products WHERE id = ?", [id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The DELETE result is: ", results);
+
+      res.json({ success: "Product deleted successfully" });
     }
   );
 
