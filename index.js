@@ -90,6 +90,32 @@ server.delete("/product/:id", (req, res) => {
   connection.end();
 });
 
+server.get("/product/:id", (req, res) => {
+  const id = req.params.id;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "SELECT id, category, name, description, image FROM products WHERE id = ?", [id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The SELECT result is: ", results);
+
+      res.json(results[0]);
+    }
+  );
+
+  connection.end();
+});
+
 server.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
