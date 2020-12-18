@@ -37,7 +37,7 @@ server.get("/products/", (req, res) => {
 });
 
 server.post("/product", (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   const { name, category, description, image } = req.body;
 
   const connection = mysql.createConnection({
@@ -77,7 +77,8 @@ server.delete("/product/:id", (req, res) => {
   connection.connect();
 
   connection.query(
-    "DELETE FROM products WHERE id = ?", [id],
+    "DELETE FROM products WHERE id = ?",
+    [id],
     function (error, results, fields) {
       if (error) throw error;
 
@@ -103,13 +104,42 @@ server.get("/product/:id", (req, res) => {
   connection.connect();
 
   connection.query(
-    "SELECT id, category, name, description, image FROM products WHERE id = ?", [id],
+    "SELECT id, category, name, description, image FROM products WHERE id = ?",
+    [id],
     function (error, results, fields) {
       if (error) throw error;
 
       console.log("The SELECT result is: ", results);
 
       res.json(results[0]);
+    }
+  );
+
+  connection.end();
+});
+
+server.put("/product/:id", (req, res) => {
+  const id = req.params.id;
+  const { name, category, description, image } = req.body;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "UPDATE products SET category = ?, name = ?, description = ?, image = ? WHERE id = ?",
+    [category, name, description, image, id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The UPDATE result is: ", results);
+
+      res.json({ success: "Product updated successfully" });
     }
   );
 
