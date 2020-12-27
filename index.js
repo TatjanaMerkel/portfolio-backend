@@ -2,27 +2,28 @@ const cors = require("cors");
 const express = require("express");
 const mysql = require("mysql");
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "12345678",
-  database: "portfolio_db",
-});
-
-const app = express();
+const server = express();
 const port = 3001;
 
-app.use(cors());
+server.use(express.json());
+server.use(cors());
 
-app.get("/", (req, res) => {
+server.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.get("/products/", (req, res) => {
+server.get("/products/", (req, res) => {
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
   connection.connect();
 
   connection.query(
-    "SELECT category, name, description, image FROM products",
+    "SELECT id, category, name, description, image FROM products",
     function (error, results, fields) {
       if (error) throw error;
 
@@ -35,6 +36,116 @@ app.get("/products/", (req, res) => {
   connection.end();
 });
 
-app.listen(port, () => {
+server.post("/product", (req, res) => {
+  console.log(req.body);
+  const { name, category, description, image } = req.body;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "INSERT INTO products (category, name, description, image) VALUES (?, ?, ?, ?)",
+    [category, name, description, image],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The INSERT result is: ", results);
+
+      res.json({ success: "Product added successfully" });
+    }
+  );
+
+  connection.end();
+});
+
+server.delete("/product/:id", (req, res) => {
+  const id = req.params.id;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "DELETE FROM products WHERE id = ?",
+    [id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The DELETE result is: ", results);
+
+      res.json({ success: "Product deleted successfully" });
+    }
+  );
+
+  connection.end();
+});
+
+server.get("/product/:id", (req, res) => {
+  const id = req.params.id;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "SELECT id, category, name, description, image FROM products WHERE id = ?",
+    [id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The SELECT result is: ", results);
+
+      res.json(results[0]);
+    }
+  );
+
+  connection.end();
+});
+
+server.put("/product/:id", (req, res) => {
+  const id = req.params.id;
+  const { name, category, description, image } = req.body;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "UPDATE products SET category = ?, name = ?, description = ?, image = ? WHERE id = ?",
+    [category, name, description, image, id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The UPDATE result is: ", results);
+
+      res.json({ success: "Product updated successfully" });
+    }
+  );
+
+  connection.end();
+});
+
+server.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
