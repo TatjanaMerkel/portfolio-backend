@@ -8,9 +8,147 @@ const port = 3001;
 server.use(express.json());
 server.use(cors());
 
-server.get("/", (req, res) => {
-  res.send("Hello World!");
+//
+// Category routes
+//
+
+server.get("/categories/", (req, res) => {
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "SELECT id, name FROM categories",
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The solution is: ", results);
+
+      res.json(results);
+    }
+  );
+
+  connection.end();
 });
+
+server.post("/category/", (req, res) => {
+  console.log(req.body);
+  const { name } = req.body;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "INSERT INTO categories (name) VALUES (?)",
+    [name],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The INSERT result is: ", results);
+
+      res.json({ success: "Category added successfully" });
+    }
+  );
+
+  connection.end();
+});
+
+server.delete("/category/:id", (req, res) => {
+  const id = req.params.id;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "DELETE FROM categories WHERE id = ?",
+    [id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The DELETE result is: ", results);
+
+      res.json({ success: "Category deleted successfully" });
+    }
+  );
+
+  connection.end();
+});
+
+server.get("/category/:id", (req, res) => {
+  const id = req.params.id;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "SELECT id, name FROM categories WHERE id = ?",
+    [id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The SELECT result is: ", results);
+
+      res.json(results[0]);
+    }
+  );
+
+  connection.end();
+});
+
+server.put("/category/:id", (req, res) => {
+  const id = req.params.id;
+  const { name } = req.body;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "UPDATE categories SET name = ? WHERE id = ?",
+    [name, id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The UPDATE result is: ", results);
+
+      res.json({ success: "Category updated successfully" });
+    }
+  );
+
+  connection.end();
+});
+
+//
+// Product routes
+//
 
 server.get("/products/", (req, res) => {
   const connection = mysql.createConnection({
@@ -145,6 +283,10 @@ server.put("/product/:id", (req, res) => {
 
   connection.end();
 });
+
+//
+// Start server
+//
 
 server.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
