@@ -8,10 +8,6 @@ const port = 3001;
 server.use(express.json());
 server.use(cors());
 
-server.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 server.get("/products/", (req, res) => {
   const connection = mysql.createConnection({
     host: "localhost",
