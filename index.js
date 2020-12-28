@@ -150,7 +150,9 @@ server.put("/category/:id", (req, res) => {
 // Product routes
 //
 
-server.get("/products/", (req, res) => {
+server.get("/products", (req, res) => {
+  const category = req.query.category;
+
   const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -161,7 +163,8 @@ server.get("/products/", (req, res) => {
   connection.connect();
 
   connection.query(
-    "SELECT id, category, name, description, image FROM products",
+    "SELECT id, category, name, description, image FROM products WHERE category = ?",
+    [category],
     function (error, results, fields) {
       if (error) throw error;
 
