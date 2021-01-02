@@ -9,6 +9,144 @@ server.use(express.json());
 server.use(cors());
 
 //
+// Price type routes
+//
+
+server.get("/price-types/", (req, res) => {
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "SELECT id, description FROM price_types",
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The solution is: ", results);
+
+      res.json(results);
+    }
+  );
+
+  connection.end();
+});
+
+server.post("/price-type/", (req, res) => {
+  console.log(req.body);
+  const { description } = req.body;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "INSERT INTO price_types (description) VALUES (?)",
+    [description],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The INSERT result is: ", results);
+
+      res.json({ success: "Price type added successfully" });
+    }
+  );
+
+  connection.end();
+});
+
+server.delete("/price-type/:id", (req, res) => {
+  const id = req.params.id;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "DELETE FROM price_types WHERE id = ?",
+    [id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The DELETE result is: ", results);
+
+      res.json({ success: "Price type deleted successfully" });
+    }
+  );
+
+  connection.end();
+});
+
+server.get("/price-type/:id", (req, res) => {
+  const id = req.params.id;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "SELECT id, description FROM price_types WHERE id = ?",
+    [id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The SELECT result is: ", results);
+
+      res.json(results[0]);
+    }
+  );
+
+  connection.end();
+});
+
+server.put("/price-type/:id", (req, res) => {
+  const id = req.params.id;
+  const { description } = req.body;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  connection.query(
+    "UPDATE price_types SET description = ? WHERE id = ?",
+    [description, id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      console.log("The UPDATE result is: ", results);
+
+      res.json({ success: "Price type updated successfully" });
+    }
+  );
+
+  connection.end();
+});
+
+//
 // Category routes
 //
 
