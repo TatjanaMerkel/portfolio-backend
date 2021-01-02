@@ -162,8 +162,13 @@ server.get("/products", (req, res) => {
 
   connection.connect();
 
+  if (category)
+    sql = "SELECT id, category, price_type, name, description, price, image FROM products WHERE category = ?"
+  else
+    sql = "SELECT id, category, price_type, name, description, price, image FROM products"
+
   connection.query(
-    "SELECT id, category, name, description, image FROM products WHERE category = ?",
+    sql,
     [category],
     function (error, results, fields) {
       if (error) throw error;
@@ -179,7 +184,7 @@ server.get("/products", (req, res) => {
 
 server.post("/product", (req, res) => {
   console.log(req.body);
-  const { name, category, description, image } = req.body;
+  const { category, price_type, name, description, price, image } = req.body;
 
   const connection = mysql.createConnection({
     host: "localhost",
@@ -191,8 +196,8 @@ server.post("/product", (req, res) => {
   connection.connect();
 
   connection.query(
-    "INSERT INTO products (category, name, description, image) VALUES (?, ?, ?, ?)",
-    [category, name, description, image],
+    "INSERT INTO products (category, price_type, name, description, price, image) VALUES (?, ?, ?, ?, ?, ?)",
+    [category, price_type, name, description, price, image],
     function (error, results, fields) {
       if (error) throw error;
 
@@ -245,7 +250,7 @@ server.get("/product/:id", (req, res) => {
   connection.connect();
 
   connection.query(
-    "SELECT id, category, name, description, image FROM products WHERE id = ?",
+    "SELECT id, category, price_type, name, description, price, image FROM products WHERE id = ?",
     [id],
     function (error, results, fields) {
       if (error) throw error;
@@ -261,7 +266,7 @@ server.get("/product/:id", (req, res) => {
 
 server.put("/product/:id", (req, res) => {
   const id = req.params.id;
-  const { name, category, description, image } = req.body;
+  const { name, category, price_type, description, price, image } = req.body;
 
   const connection = mysql.createConnection({
     host: "localhost",
@@ -273,8 +278,8 @@ server.put("/product/:id", (req, res) => {
   connection.connect();
 
   connection.query(
-    "UPDATE products SET category = ?, name = ?, description = ?, image = ? WHERE id = ?",
-    [category, name, description, image, id],
+    "UPDATE products SET category = ?, price_type = ?, name = ?, description = ?, price = ?, image = ? WHERE id = ?",
+    [category, price_type, name, description, price, image, id],
     function (error, results, fields) {
       if (error) throw error;
 
