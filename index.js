@@ -321,30 +321,65 @@ server.get("/products", (req, res) => {
 
 server.post("/product", (req, res) => {
   console.log(req.body);
-  const { category, price_type, name, description, price, image } = req.body;
+  const { category, price_type, name, description, price, image, token } = req.body;
 
-  const connection = mysql.createConnection({
+  //
+  // Check token
+  //
+
+  const connection2 = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "12345678",
     database: "portfolio_db",
   });
 
-  connection.connect();
+  connection2.connect();
 
-  connection.query(
-    "INSERT INTO products (category, price_type, name, description, price, image) VALUES (?, ?, ?, ?, ?, ?)",
-    [category, price_type, name, description, price, image],
+  connection2.query(
+    "SELECT token FROM users",
     function (error, results, fields) {
       if (error) throw error;
 
-      console.log("The INSERT result is: ", results);
+      // Check if token contained
+      let valid = false;
+      for (const row of results) {
+        if (row.token === token) {
+          valid = true;
+        }
+      }
 
-      res.json({ success: "Product added successfully" });
+      if (valid) {
+        const connection = mysql.createConnection({
+          host: "localhost",
+          user: "root",
+          password: "12345678",
+          database: "portfolio_db",
+        });
+      
+        connection.connect();
+      
+        connection.query(
+          "INSERT INTO products (category, price_type, name, description, price, image) VALUES (?, ?, ?, ?, ?, ?)",
+          [category, price_type, name, description, price, image],
+          function (error, results, fields) {
+            if (error) throw error;
+      
+            console.log("The INSERT result is: ", results);
+      
+            res.json({ success: "Product added successfully" });
+          }
+        );
+      
+        connection.end();
+
+      } else {
+        res.status(500).json({error: 'Invalid Auth Token'});
+      }
     }
   );
 
-  connection.end();
+  connection2.end();
 });
 
 server.delete("/product/:id", (req, res) => {
@@ -458,11 +493,33 @@ server.post("/login", (req, res) => {
 
       if (count === 1) {
         // Create session token
-        
+        const token = crypto.randomBytes(20).toString("hex");
 
+        const connection2 = mysql.createConnection({
+          host: "localhost",
+          user: "root",
+          password: "12345678",
+          database: "portfolio_db",
+        });
+      
+        connection2.connect();
+
+        connection2.query(
+          "UPDATE users SET token = ? WHERE username = ?",
+          [token, username],
+          function (error, results, fields) {
+            if (error) throw error;
+      
+            console.log("The UPDATE result is: ", results);
+          }
+        );
+
+        connection2.end();
+
+        res.status(200).json({token: token});
       } else {
         // Return error
-        res.json({ error: "Invalid Credentials" });
+        res.status(500).json({ error: "Invalid Credentials" });
       }
     }
   );
