@@ -1,4 +1,5 @@
 const cors = require("cors");
+const crypto = require("crypto");
 const express = require("express");
 const mysql = require("mysql");
 
@@ -301,21 +302,19 @@ server.get("/products", (req, res) => {
   connection.connect();
 
   if (category)
-    sql = "SELECT id, category, price_type, name, description, price, image FROM products WHERE category = ?"
+    sql =
+      "SELECT id, category, price_type, name, description, price, image FROM products WHERE category = ?";
   else
-    sql = "SELECT id, category, price_type, name, description, price, image FROM products"
+    sql =
+      "SELECT id, category, price_type, name, description, price, image FROM products";
 
-  connection.query(
-    sql,
-    [category],
-    function (error, results, fields) {
-      if (error) throw error;
+  connection.query(sql, [category], function (error, results, fields) {
+    if (error) throw error;
 
-      console.log("The solution is: ", results);
+    console.log("The solution is: ", results);
 
-      res.json(results);
-    }
-  );
+    res.json(results);
+  });
 
   connection.end();
 });
@@ -447,8 +446,26 @@ server.post("/login", (req, res) => {
 
   connection.connect();
 
-  console.log(username);
-  console.log(password);
+  const hash = crypto.createHash("md5").update(password).digest("hex");
+
+  connection.query(
+    "SELECT COUNT(*) AS count FROM users WHERE username = ? AND password = ?",
+    [username, hash],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      const count = results[0].count;
+
+      if (count === 1) {
+        // Create session token
+        
+
+      } else {
+        // Return error
+        res.json({ error: "Invalid Credentials" });
+      }
+    }
+  );
 
   connection.end();
 });
