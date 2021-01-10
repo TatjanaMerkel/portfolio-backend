@@ -431,6 +431,29 @@ server.put("/product/:id", (req, res) => {
 });
 
 //
+// Login
+//
+
+server.post("/login", (req, res) => {
+  console.log(req.body);
+  const { username, password } = req.body;
+
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "12345678",
+    database: "portfolio_db",
+  });
+
+  connection.connect();
+
+  console.log(username);
+  console.log(password);
+
+  connection.end();
+});
+
+//
 // Start server
 //
 
