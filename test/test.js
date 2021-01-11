@@ -86,3 +86,81 @@ describe("Products", function () {
     });
   });
 });
+
+describe("Categories", function () {
+  describe("GET /categories", function () {
+    it("reading all categories from the initial database should return 2 categories", async function () {
+      // GIVEN  the initial database
+
+      // WHEN   reading all categories
+
+      const getResponse = await chai
+        .request("http://localhost:3001")
+        .get("/categories");
+
+      // THEN   the server should return an HTTP 200 OK
+      // AND    the JSON response should be an array of length 2
+
+      chai.expect(getResponse).to.have.status(200);
+      chai.expect(getResponse.body).to.be.an("array").that.has.length(2);
+    });
+  });
+
+  describe("GET /categories/:id", function () {
+    it("should return the specified category", async function () {
+      // GIVEN  the initial database
+
+      // WHEN   reading the first category
+
+      const getResponse = await chai
+        .request("http://localhost:3001")
+        .get("/category/1");
+
+      // THEN   the server should return an HTTP 200 OK
+      // AND    the JSON response should be the first category
+
+      chai.expect(getResponse).to.have.status(200);
+      chai.expect(getResponse.body).to.be.an("object");
+      chai.expect(getResponse.body.name).to.be.equal("fruits");
+    });
+  });
+
+  describe("POST /category", function () {
+    it("should add the new category to the database", async function () {
+      // GIVEN  the initial database
+      // AND    a valid session token
+
+      const loginResponse = await chai
+        .request("http://localhost:3001")
+        .post("/login")
+        .send({
+          username: "Erika",
+          password: "erika",
+        });
+
+      const loginObject = JSON.parse(loginResponse.text);
+      const token = loginObject.token;
+
+      // WHEN   adding a certain category
+
+      const getResponse = await chai
+        .request("http://localhost:3001")
+        .post("/category")
+        .send({
+          name: "Test Category",
+          token: token
+        });
+
+      // THEN   the server should return an HTTP 201 OK
+      // AND    the database should contain one more category, i.e. 3 categories in total
+
+      chai.expect(getResponse).to.have.status(201);
+
+      const getResponse2 = await chai
+        .request("http://localhost:3001")
+        .get("/categories");
+
+      chai.expect(getResponse2.body).to.be.an("array").that.has.length(3);
+    });
+  });
+});
