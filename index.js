@@ -95,7 +95,7 @@ server.post("/price-type", (req, res) => {
   console.log("POST /price-type");
   console.log(req.body);
 
-  const { description } = req.body;
+  const { description, token } = req.body;
 
   checkToken(
     token,
@@ -139,6 +139,7 @@ server.delete("/price-type/:id", (req, res) => {
   console.log("DELETE /price-type");
 
   const id = req.params.id;
+  const { token } = req.body;
 
   checkToken(
     token,
@@ -222,7 +223,7 @@ server.put("/price-type/:id", (req, res) => {
   console.log(req.body);
 
   const id = req.params.id;
-  const { description } = req.body;
+  const { description, token } = req.body;
 
   checkToken(
     token,
@@ -347,6 +348,7 @@ server.delete("/category/:id", (req, res) => {
   console.log("DELETE /category");
 
   const id = req.params.id;
+  const { token } = req.body;
 
   checkToken(
     token,
@@ -430,7 +432,7 @@ server.put("/category/:id", (req, res) => {
   console.log(req.body);
 
   const id = req.params.id;
-  const { name } = req.body;
+  const { name, token } = req.body;
 
   checkToken(
     token,
@@ -566,6 +568,7 @@ server.delete("/product/:id", (req, res) => {
   console.log("DELETE /product");
 
   const id = req.params.id;
+  const { token } = req.body;
 
   checkToken(
     token,
@@ -647,16 +650,16 @@ server.put("/product/:id", (req, res) => {
   console.log(req.body);
 
   const id = req.params.id;
-  const { name, category, price_type, description, price, image } = req.body;
+  const { name, category, price_type, description, price, image, token } = req.body;
 
   checkToken(
     token,
-    () => putProduct(name, category, price_type, description, price, image, res),
+    () => putProduct(name, category, price_type, description, price, image, id, res),
     () => res.status(500).json({ error: "Invalid Auth Token" })
   );
 });
 
-function putProduct(name, category, price_type, description, price, image, res) {
+function putProduct(name, category, price_type, description, price, image, id, res) {
   const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
