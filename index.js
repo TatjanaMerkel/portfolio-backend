@@ -123,7 +123,7 @@ function postPriceType(description, res) {
 
       console.log("The INSERT result is: ", results);
 
-      res.json({ success: "Price type added successfully" });
+      res.status(201).json({ success: "Price type added successfully" });
     }
   );
 
@@ -332,7 +332,7 @@ function postCategory(name, res) {
 
       console.log("The INSERT result is: ", results);
 
-      res.json({ success: "Category added successfully" });
+      res.status(201).json({ success: "Category added successfully" });
     }
   );
 
@@ -552,7 +552,7 @@ function postProduct(category, price_type, name, description, price, image, res)
 
       console.log("The INSERT result is: ", results);
 
-      res.json({ success: "Product added successfully" });
+      res.status(201).json({ success: "Product added successfully" });
     }
   );
 
